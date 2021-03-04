@@ -1,5 +1,5 @@
 module.exports = function registerHook({ services, exceptions, database, env }) {
-	const { ServiceUnavailableException, ForbiddenException } = exceptions;
+    const { ServiceUnavailableException, ForbiddenException } = exceptions;
     const slug = require('slug');
     const slugGenerationConfig = [
         {
@@ -17,8 +17,8 @@ module.exports = function registerHook({ services, exceptions, database, env }) 
     const getUniqueSlug = async (slugConfig, text) => {
         let curSlug = slug(text);
         try {
-			let matchingRows = await database(slugConfig.collection)
-				.where(slugConfig.slugField, curSlug)
+            let matchingRows = await database(slugConfig.collection)
+                .where(slugConfig.slugField, curSlug)
                 .then((rows) => { return rows; });
             
             if(matchingRows.length === 0) return curSlug;
@@ -33,8 +33,8 @@ module.exports = function registerHook({ services, exceptions, database, env }) 
             curSlug = await getUniqueSlug(slugConfig, text); 
 
             return curSlug;
-		} catch (error) {
-			throw new ServiceUnavailableException(error);
+        } catch (error) {
+            throw new ServiceUnavailableException(error);
         }
     };
 
@@ -69,15 +69,15 @@ module.exports = function registerHook({ services, exceptions, database, env }) 
         return input;
     };
 
-	return { 
+    return { 
 
         'items.create.before': async function (input, { collection, payload, action, item }) {
             return await generateSlugBase(input, collection);
         },
-		'items.update.before': async function (input, { collection, payload, action, item }) {
+        'items.update.before': async function (input, { collection, payload, action, item }) {
             // don't update slug on multi select
             if (Array.isArray(item)) return input;
             return await generateSlugBase([input], collection);
-		},
-	};
+        },
+    };
 };
